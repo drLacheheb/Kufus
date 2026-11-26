@@ -18,6 +18,17 @@ class WindowsDiskParserTest {
     }
 
     @Test
+    fun acceptsUsbAndRemovableCardReadersWhileRejectingInternalBuses() {
+        isEligibleWindowsStorageBus(WIN_BUS_TYPE_USB, isRemovableMedia = true) shouldBe true
+        isEligibleWindowsStorageBus(WIN_BUS_TYPE_USB, isRemovableMedia = false) shouldBe true
+        isEligibleWindowsStorageBus(WIN_BUS_TYPE_SD, isRemovableMedia = true) shouldBe true
+        isEligibleWindowsStorageBus(WIN_BUS_TYPE_MMC, isRemovableMedia = true) shouldBe true
+        isEligibleWindowsStorageBus(WIN_BUS_TYPE_MMC, isRemovableMedia = false) shouldBe false
+        isEligibleWindowsStorageBus(0x11, isRemovableMedia = false) shouldBe false // NVMe
+        isEligibleWindowsStorageBus(0x0B, isRemovableMedia = false) shouldBe false // SATA
+    }
+
+    @Test
     fun quotesWindowsCommandLineArgumentsSafely() {
         formatWindowsCommandArguments(emptyList()) shouldBe null
         formatWindowsCommandArguments(listOf("--flash", "C:\\My Images\\ubuntu\"24\\.iso")) shouldBe

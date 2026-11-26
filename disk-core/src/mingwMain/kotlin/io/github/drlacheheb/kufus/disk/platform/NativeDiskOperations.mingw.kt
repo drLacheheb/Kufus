@@ -4,10 +4,12 @@ import io.github.drlacheheb.kufus.disk.model.UsbDrive
 import io.github.drlacheheb.kufus.disk.model.filterSafeUsbDrives
 import io.github.drlacheheb.kufus.disk.parser.buildWindowsDriveModel
 import io.github.drlacheheb.kufus.disk.parser.formatWindowsCommandArguments
+import io.github.drlacheheb.kufus.disk.parser.isEligibleWindowsStorageBus
 import io.github.drlacheheb.kufus.disk.parser.isWindowsSystemMount
 import io.github.drlacheheb.kufus.disk.parser.normalizeWindowsDriveLetter
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.COpaque
+import kotlinx.cinterop.COpaquePointer
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.StableRef
@@ -31,23 +33,27 @@ import kotlinx.cinterop.toKString
 import kotlinx.cinterop.value
 import kotlinx.cinterop.wcstr
 import platform.posix.memcpy
-import platform.windows.BusTypeUsb
 import platform.windows.CloseHandle
 import platform.windows.CreateFileW
 import platform.windows.CreateWindowExW
 import platform.windows.DEVICE_NOTIFY_WINDOW_HANDLE
+import platform.windows.DISK_GEOMETRY_EX
 import platform.windows.DWORDVar
 import platform.windows.DefWindowProcW
 import platform.windows.DestroyWindow
 import platform.windows.DeviceIoControl
 import platform.windows.DispatchMessageW
+import platform.windows.FILE_ATTRIBUTE_NORMAL
+import platform.windows.FILE_SHARE_DELETE
 import platform.windows.FILE_SHARE_READ
 import platform.windows.FILE_SHARE_WRITE
 import platform.windows.GET_LENGTH_INFORMATION
 import platform.windows.GUID_DEVINTERFACE_DISK
+import platform.windows.GUID_DEVINTERFACE_VOLUME
 import platform.windows.GWLP_USERDATA
 import platform.windows.GetExitCodeProcess
 import platform.windows.GetLogicalDriveStringsW
+import platform.windows.GetModuleHandleW
 import platform.windows.GetWindowLongPtrW
 import platform.windows.GetWindowsDirectoryW
 import platform.windows.HANDLE
@@ -55,6 +61,7 @@ import platform.windows.HWND
 import platform.windows.HWND_MESSAGE
 import platform.windows.INFINITE
 import platform.windows.INVALID_HANDLE_VALUE
+import platform.windows.IOCTL_DISK_GET_DRIVE_GEOMETRY_EX
 import platform.windows.IOCTL_DISK_GET_LENGTH_INFO
 import platform.windows.IOCTL_STORAGE_GET_DEVICE_NUMBER
 import platform.windows.IOCTL_STORAGE_QUERY_PROPERTY
@@ -86,6 +93,7 @@ import platform.windows.WaitForSingleObject
 
 private const val MAX_PHYSICAL_DRIVES = 32
 private const val DESCRIPTOR_BUFFER_SIZE = 1024
+private const val GEOMETRY_BUFFER_SIZE = 256
 private const val LOGICAL_DRIVES_BUFFER_CHARS = 512
 private const val WATCH_TIMEOUT_MS = 500u
 private const val WATCH_DEBOUNCE_MS = 200u
@@ -124,12 +132,16 @@ actual fun watchPlatformUsbDrives(
         stateRef.dispose()
         return
     }
-    val notifyHandle = registerDiskInterfaceNotification(window)
+    val diskNotifyHandle = registerInterfaceNotification(window, GUID_DEVINTERFACE_DISK.ptr)
+    val volumeNotifyHandle = registerInterfaceNotification(window, GUID_DEVINTERFACE_VOLUME.ptr)
     try {
         runWindowsWatchLoop(window, state, initial, onDrivesUpdated, shouldContinue)
     } finally {
-        if (notifyHandle != null) {
-            UnregisterDeviceNotification(notifyHandle)
+        if (volumeNotifyHandle != null) {
+            UnregisterDeviceNotification(volumeNotifyHandle)
+        }
+        if (diskNotifyHandle != null) {
+            UnregisterDeviceNotification(diskNotifyHandle)
         }
         SetWindowLongPtrW(window, GWLP_USERDATA, 0L)
         DestroyWindow(window)
@@ -192,9 +204,11 @@ actual fun launchPlatformElevatedProcess(
 @OptIn(ExperimentalForeignApi::class)
 private fun createDeviceWatcherWindow(stateRef: StableRef<WindowsWatchState>): HWND? =
     memScoped {
+        val hInstance = GetModuleHandleW(null)
         val className = "KufusDiskWatcherWindow".wcstr.ptr
         val wndClass = alloc<WNDCLASSEXW>()
         wndClass.cbSize = sizeOf<WNDCLASSEXW>().toUInt()
+        wndClass.hInstance = hInstance
         wndClass.lpfnWndProc =
             staticCFunction { hwnd, message, wParam, lParam ->
                 if (message == WM_DEVICECHANGE.toUInt()) {
@@ -219,7 +233,7 @@ private fun createDeviceWatcherWindow(stateRef: StableRef<WindowsWatchState>): H
                 nHeight = 0,
                 hWndParent = HWND_MESSAGE,
                 hMenu = null,
-                hInstance = null,
+                hInstance = hInstance,
                 lpParam = null,
             ) ?: return null
         SetWindowLongPtrW(hwnd, GWLP_USERDATA, stateRef.asCPointer().rawValue.toLong())
@@ -237,14 +251,17 @@ private const val DEV_BROADCAST_DEVICEINTERFACE_SIZE = 32u
 private const val GUID_BYTE_SIZE = 16uL
 
 @OptIn(ExperimentalForeignApi::class)
-private fun registerDiskInterfaceNotification(hwnd: HWND): HANDLE? =
+private fun registerInterfaceNotification(
+    hwnd: HWND,
+    interfaceGuid: COpaquePointer,
+): HANDLE? =
     memScoped {
         val filterBytes = allocArray<ByteVar>(DEV_BROADCAST_DEVICEINTERFACE_SIZE.toInt())
         val headerWords = filterBytes.reinterpret<UIntVar>()
         headerWords[0] = DEV_BROADCAST_DEVICEINTERFACE_SIZE
         headerWords[1] = DBT_DEVTYP_DEVICEINTERFACE_VAL
         headerWords[2] = 0u
-        memcpy(filterBytes + DEV_BROADCAST_DEVICEINTERFACE_HEADER_BYTES, GUID_DEVINTERFACE_DISK.ptr, GUID_BYTE_SIZE)
+        memcpy(filterBytes + DEV_BROADCAST_DEVICEINTERFACE_HEADER_BYTES, interfaceGuid, GUID_BYTE_SIZE)
         RegisterDeviceNotificationW(hwnd, filterBytes, DEVICE_NOTIFY_WINDOW_HANDLE.toUInt())
     }
 
@@ -345,8 +362,10 @@ private fun queryPhysicalDrive(
                     lpOverlapped = null,
                 )
             if (ok == 0) return null
+            descriptorBuffer[DESCRIPTOR_BUFFER_SIZE - 1] = 0
             val descriptor = descriptorBuffer.reinterpret<STORAGE_DEVICE_DESCRIPTOR>().pointed
-            if (descriptor.BusType != BusTypeUsb) return null
+            val isRemovableMedia = descriptor.RemovableMedia.toInt() != 0
+            if (!isEligibleWindowsStorageBus(descriptor.BusType.toInt(), isRemovableMedia)) return null
             val sizeBytes = queryDiskLength(handle) ?: return null
             val vendor = readCStringAtOffset(descriptorBuffer, bytesReturned.value, descriptor.VendorIdOffset)
             val product = readCStringAtOffset(descriptorBuffer, bytesReturned.value, descriptor.ProductIdOffset)
@@ -360,7 +379,7 @@ private fun queryPhysicalDrive(
                 sizeBytes = sizeBytes,
                 serial = serial,
                 mountPoints = mountPoints,
-                isRemovable = descriptor.RemovableMedia.toInt() != 0 || descriptor.BusType == BusTypeUsb,
+                isRemovable = true,
                 isSystemDisk = isSystem,
             )
         }
@@ -372,9 +391,30 @@ private fun queryPhysicalDrive(
 @OptIn(ExperimentalForeignApi::class)
 internal fun queryDiskLength(handle: HANDLE): Long? =
     memScoped {
-        val lengthInfo = alloc<GET_LENGTH_INFORMATION>()
         val bytesReturned = alloc<DWORDVar>()
-        val ok =
+        // IOCTL_DISK_GET_DRIVE_GEOMETRY_EX uses FILE_ANY_ACCESS, so it works on
+        // dwDesiredAccess = 0 handles without Administrator elevation.
+        val geometryBuffer = allocArray<ByteVar>(GEOMETRY_BUFFER_SIZE)
+        val geometryOk =
+            DeviceIoControl(
+                hDevice = handle,
+                dwIoControlCode = IOCTL_DISK_GET_DRIVE_GEOMETRY_EX.toUInt(),
+                lpInBuffer = null,
+                nInBufferSize = 0u,
+                lpOutBuffer = geometryBuffer,
+                nOutBufferSize = GEOMETRY_BUFFER_SIZE.toUInt(),
+                lpBytesReturned = bytesReturned.ptr,
+                lpOverlapped = null,
+            )
+        if (geometryOk != 0) {
+            val geometry = geometryBuffer.reinterpret<DISK_GEOMETRY_EX>().pointed
+            val size = geometry.DiskSize.QuadPart
+            if (size > 0L) return size
+        }
+
+        // Fallback for elevated handles opened with GENERIC_READ (IOCTL_DISK_GET_LENGTH_INFO requires FILE_READ_ACCESS).
+        val lengthInfo = alloc<GET_LENGTH_INFORMATION>()
+        val lengthOk =
             DeviceIoControl(
                 hDevice = handle,
                 dwIoControlCode = IOCTL_DISK_GET_LENGTH_INFO.toUInt(),
@@ -385,23 +425,24 @@ internal fun queryDiskLength(handle: HANDLE): Long? =
                 lpBytesReturned = bytesReturned.ptr,
                 lpOverlapped = null,
             )
-        if (ok != 0) lengthInfo.Length.QuadPart else null
+        if (lengthOk != 0) lengthInfo.Length.QuadPart.takeIf { it > 0L } else null
     }
 
 @OptIn(ExperimentalForeignApi::class)
 internal fun openReadMetadataHandle(path: String): HANDLE? =
     memScoped {
+        val shareMode = (FILE_SHARE_READ or FILE_SHARE_WRITE or FILE_SHARE_DELETE).toUInt()
         val handle =
             CreateFileW(
                 lpFileName = path.wcstr.ptr,
                 dwDesiredAccess = 0u,
-                dwShareMode = (FILE_SHARE_READ or FILE_SHARE_WRITE).toUInt(),
+                dwShareMode = shareMode,
                 lpSecurityAttributes = null,
                 dwCreationDisposition = OPEN_EXISTING.toUInt(),
-                dwFlagsAndAttributes = 0u,
+                dwFlagsAndAttributes = FILE_ATTRIBUTE_NORMAL.toUInt(),
                 hTemplateFile = null,
             )
-        if (handle == INVALID_HANDLE_VALUE) null else handle
+        if (handle == null || handle == INVALID_HANDLE_VALUE) null else handle
     }
 
 @OptIn(ExperimentalForeignApi::class)

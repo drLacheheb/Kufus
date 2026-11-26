@@ -1,5 +1,19 @@
 package io.github.drlacheheb.kufus.disk.parser
 
+const val WIN_BUS_TYPE_USB = 0x07
+const val WIN_BUS_TYPE_SD = 0x0C
+const val WIN_BUS_TYPE_MMC = 0x0D
+
+fun isEligibleWindowsStorageBus(
+    busTypeCode: Int,
+    isRemovableMedia: Boolean,
+): Boolean =
+    when (busTypeCode) {
+        WIN_BUS_TYPE_USB -> true
+        WIN_BUS_TYPE_SD, WIN_BUS_TYPE_MMC -> isRemovableMedia
+        else -> false
+    }
+
 fun buildWindowsDriveModel(
     vendorId: String?,
     productId: String?,
