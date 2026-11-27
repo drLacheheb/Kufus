@@ -3,86 +3,88 @@ package io.github.drlacheheb.kufus.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-val CanvasBackground = Color(0xFF09090B)
-val ModalSurface = Color(0xFF121215)
-val SidebarBackground = Color(0xFF18181B)
-val InputBackground = Color(0xFF09090B)
-val FooterBackground = Color(0xFF18181B)
-val DarkBorder = Color(0xFF27272A)
-val DarkBorderHover = Color(0xFF3F3F46)
+val CanvasBackground = Color(0xFF0A0A0A)
+val ModalSurface = Color(0xFF0A0A0A)
+val SidebarBackground = Color(0xFF171717)
+val InputBackground = Color(0xFF121212)
+val FooterBackground = Color(0xFF0A0A0A)
+val DarkBorder = Color(0xFF333333)
+val DarkBorderHover = Color(0xFF525252)
 
-val DarkBackground = Color(0xFF131316)
-val DarkSurface = Color(0xFF131316)
-val DarkSurfaceDim = Color(0xFF131316)
-val DarkSurfaceContainerLowest = Color(0xFF0E0E11)
-val DarkSurfaceContainerLow = Color(0xFF1B1B1E)
-val DarkSurfaceContainer = Color(0xFF1F1F22)
-val DarkSurfaceContainerHigh = Color(0xFF2A2A2D)
-val DarkSurfaceContainerHighest = Color(0xFF353437)
-val DarkSurfaceVariant = Color(0xFF353437)
-val DarkSurfaceBright = Color(0xFF39393C)
+val DarkBackground = Color(0xFF0A0A0A)
+val DarkSurface = Color(0xFF0A0A0A)
+val DarkSurfaceDim = Color(0xFF0A0A0A)
+val DarkSurfaceContainerLowest = Color(0xFF121212)
+val DarkSurfaceContainerLow = Color(0xFF141414)
+val DarkSurfaceContainer = Color(0xFF171717)
+val DarkSurfaceContainerHigh = Color(0xFF262626)
+val DarkSurfaceContainerHighest = Color(0xFF333333)
+val DarkSurfaceVariant = Color(0xFF262626)
+val DarkSurfaceBright = Color(0xFF262626)
 
-val DarkOutline = Color(0xFF908FA0)
-val DarkOutlineMuted = Color(0xFF908FA0)
-val DarkOutlineVariant = Color(0xFF464554)
-val DarkOutlineHover = Color(0xFF5A5969)
+val DarkOutline = Color(0xFFA3A3A3)
+val DarkOutlineMuted = Color(0xFFA3A3A3)
+val DarkOutlineVariant = Color(0xFF262626)
+val DarkOutlineHover = Color(0xFF525252)
 
-val KufusPrimary = Color(0xFFC0C1FF)
-val KufusOnPrimary = Color(0xFF1000A9)
-val KufusPrimaryContainer = Color(0xFF8083FF)
-val KufusOnPrimaryContainer = Color(0xFF0D0096)
-val KufusPrimaryFixed = Color(0xFFE1E0FF)
-val KufusPrimaryFixedDim = Color(0xFFC0C1FF)
-val KufusInversePrimary = Color(0xFF494BD6)
+val KufusPrimary = Color(0xFFFAFAFA)
+val KufusOnPrimary = Color(0xFF0A0A0A)
+val KufusAccentText = Color(0xFFFAFAFA)
+val KufusPrimaryContainer = Color(0xFF262626)
+val KufusOnPrimaryContainer = Color(0xFFFAFAFA)
+val KufusPrimaryFixed = Color(0xFFE5E5E5)
+val KufusPrimaryFixedDim = Color(0xFFD4D4D4)
+val KufusInversePrimary = Color(0xFF171717)
 
-val KufusSecondary = Color(0xFF4EDEA3)
-val KufusOnSecondary = Color(0xFF003824)
-val KufusSecondaryContainer = Color(0xFF00A572)
+val KufusSecondary = Color(0xFF22C55E)
+val KufusOnSecondary = Color(0xFF052E16)
+val KufusSecondaryContainer = Color(0xFF15803D)
 
-val KufusTertiary = Color(0xFFFFB95F)
-val KufusOnTertiary = Color(0xFF472A00)
-val KufusTertiaryContainer = Color(0xFFCA8100)
+val KufusTertiary = Color(0xFFF59E0B)
+val KufusOnTertiary = Color(0xFF451A03)
+val KufusTertiaryContainer = Color(0xFFB45309)
 
-val KufusError = Color(0xFFFFB4AB)
-val KufusOnError = Color(0xFF690005)
-val KufusErrorContainer = Color(0xFF93000A)
-val KufusOnErrorContainer = Color(0xFFFFDAD6)
-val KufusDestructiveAccent = Color(0xFFF7768E)
+val KufusError = Color(0xFFDC2626)
+val KufusOnError = Color(0xFFFAFAFA)
+val KufusErrorContainer = Color(0xFF450A0A)
+val KufusOnErrorContainer = Color(0xFFFCA5A5)
+val KufusDestructiveAccent = Color(0xFFEF4444)
 
-val DarkOnSurface = Color(0xFFE4E1E5)
-val DarkOnSurfaceVariant = Color(0xFFC7C4D7)
-val DarkInverseSurface = Color(0xFFE4E1E5)
+val DarkOnSurface = Color(0xFFFAFAFA)
+val DarkOnSurfaceVariant = Color(0xFFD4D4D4)
+val DarkInverseSurface = Color(0xFFFAFAFA)
 
-val LightBackground = Color(0xFFF7F7FA)
-val LightSurface = Color(0xFFF7F7FA)
-val LightSurfaceDim = Color(0xFFEEEEF3)
-val LightSurfaceContainerLowest = Color(0xFFEEEEF3)
-val LightSurfaceContainerLow = Color(0xFFF0F0F5)
+val LightBackground = Color(0xFFFFFFFF)
+val LightSurface = Color(0xFFFFFFFF)
+val LightSurfaceDim = Color(0xFFF5F5F5)
+val LightSurfaceContainerLowest = Color(0xFFF5F5F5)
+val LightSurfaceContainerLow = Color(0xFFF5F5F5)
 val LightSurfaceContainer = Color(0xFFFFFFFF)
-val LightSurfaceContainerHigh = Color(0xFFE4E4EA)
-val LightSurfaceContainerHighest = Color(0xFFDDDDE5)
-val LightSurfaceVariant = Color(0xFFE4E4EA)
-val LightSurfaceBright = Color(0xFFFFFFFF)
+val LightSurfaceContainerHigh = Color(0xFFF5F5F5)
+val LightSurfaceContainerHighest = Color(0xFFE5E5E5)
+val LightSurfaceVariant = Color(0xFFF5F5F5)
+val LightSurfaceBright = Color(0xFFF5F5F5)
 val LightInputBackground = Color(0xFFFFFFFF)
-val LightBorder = Color(0xFFD4D4DC)
-val LightBorderHover = Color(0xFFB4B4C2)
-val LightOutline = Color(0xFF71717A)
-val LightOutlineVariant = Color(0xFFD4D4DC)
-val LightOnSurface = Color(0xFF18181B)
-val LightOnSurfaceVariant = Color(0xFF52525B)
-val LightPrimary = Color(0xFF494BD6)
-val LightOnPrimary = Color(0xFFFFFFFF)
-val LightPrimaryContainer = Color(0xFFE1E0FF)
-val LightOnPrimaryContainer = Color(0xFF1000A9)
-val LightSecondary = Color(0xFF00875A)
+val LightBorder = Color(0xFFD4D4D4)
+val LightBorderHover = Color(0xFFA3A3A3)
+val LightOutline = Color(0xFF666666)
+val LightOutlineVariant = Color(0xFFE5E5E5)
+val LightOnSurface = Color(0xFF0A0A0A)
+val LightOnSurfaceVariant = Color(0xFF404040)
+val LightPrimary = Color(0xFF171717)
+val LightOnPrimary = Color(0xFFFAFAFA)
+val LightAccentText = Color(0xFF171717)
+val LightPrimaryContainer = Color(0xFFF5F5F5)
+val LightOnPrimaryContainer = Color(0xFF171717)
+val LightSecondary = Color(0xFF15803D)
 val LightOnSecondary = Color(0xFFFFFFFF)
-val LightSecondaryContainer = Color(0xFF00A572)
+val LightSecondaryContainer = Color(0xFF15803D)
 val LightTertiary = Color(0xFFB45309)
 val LightOnTertiary = Color(0xFFFFFFFF)
-val LightError = Color(0xFFBA1A1A)
-val LightOnError = Color(0xFFFFFFFF)
-val LightErrorContainer = Color(0xFFFFDAD6)
-val LightOnErrorContainer = Color(0xFF410002)
+val LightError = Color(0xFFDC2626)
+val LightOnError = Color(0xFFFAFAFA)
+val LightErrorContainer = Color(0xFFFEF2F2)
+val LightOnErrorContainer = Color(0xFF991B1B)
 val LightDestructiveAccent = Color(0xFFDC2626)
 
 @Immutable
@@ -103,6 +105,7 @@ data class KufusPalette(
     val onSurfaceVariant: Color,
     val primary: Color,
     val onPrimary: Color,
+    val accentText: Color,
     val secondary: Color,
     val secondaryContainer: Color,
     val onSecondaryContainer: Color,
@@ -134,6 +137,7 @@ val DarkKufusPalette =
         onSurfaceVariant = DarkOnSurfaceVariant,
         primary = KufusPrimary,
         onPrimary = KufusOnPrimary,
+        accentText = KufusAccentText,
         secondary = KufusSecondary,
         secondaryContainer = KufusSecondaryContainer,
         onSecondaryContainer = Color.White,
@@ -143,7 +147,7 @@ val DarkKufusPalette =
         errorContainer = KufusErrorContainer,
         onErrorContainer = KufusOnErrorContainer,
         destructiveAccent = KufusDestructiveAccent,
-        contextMenuBorder = Color(0xFF2E2E35),
+        contextMenuBorder = DarkOutlineVariant,
         windowControlHover = DarkSurfaceVariant,
     )
 
@@ -165,6 +169,7 @@ val LightKufusPalette =
         onSurfaceVariant = LightOnSurfaceVariant,
         primary = LightPrimary,
         onPrimary = LightOnPrimary,
+        accentText = LightAccentText,
         secondary = LightSecondary,
         secondaryContainer = LightSecondaryContainer,
         onSecondaryContainer = Color.White,

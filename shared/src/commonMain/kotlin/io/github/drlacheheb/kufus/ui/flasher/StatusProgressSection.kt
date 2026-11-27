@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -87,7 +89,7 @@ internal fun RufusStatusSection(
                                 .height(26.dp)
                                 .pointerHoverIcon(PointerIcon.Hand),
                     ) {
-                        Text("Dismiss", style = LabelSm.copy(color = palette.primary))
+                        Text("Dismiss", style = LabelSm.copy(color = palette.accentText))
                     }
                 }
             }
@@ -103,21 +105,18 @@ internal fun RufusStatusSection(
                     icon = KufusIcons.Info,
                     contentDescription = "About Kufus",
                     enabled = true,
-                    tint = palette.primary,
                     onClick = onShowAbout,
                 )
                 KufusSquareIconButton(
                     icon = if (isDarkTheme) KufusIcons.LightMode else KufusIcons.DarkMode,
                     contentDescription = if (isDarkTheme) "Switch to light mode" else "Switch to dark mode",
                     enabled = true,
-                    tint = palette.primary,
                     onClick = actions.onToggleTheme,
                 )
                 KufusSquareIconButton(
                     icon = KufusIcons.Article,
                     contentDescription = "Show operation log",
                     enabled = true,
-                    tint = palette.primary,
                     onClick = onShowLog,
                 )
             }
@@ -173,7 +172,7 @@ private fun RufusStatusProgressBar(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(32.dp),
+                        .height(34.dp),
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     if (fraction != null) {
@@ -242,7 +241,7 @@ private fun RufusStatusProgressBar(
             when {
                 flashState is FlashOperationState.Completed -> {
                     barColor = palette.secondaryContainer
-                    borderColor = palette.secondary.copy(alpha = 0.55f)
+                    borderColor = palette.secondaryContainer
                     textColor = palette.onSecondaryContainer
                     label = "COMPLETED"
                 }
@@ -254,7 +253,7 @@ private fun RufusStatusProgressBar(
                 }
                 startEnabled -> {
                     barColor = palette.secondaryContainer
-                    borderColor = palette.secondary.copy(alpha = 0.55f)
+                    borderColor = palette.secondaryContainer
                     textColor = palette.onSecondaryContainer
                     label = "READY"
                 }
@@ -278,16 +277,29 @@ private fun RufusStatusProgressBar(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .height(32.dp),
+                        .height(34.dp),
             ) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = label,
-                        color = textColor,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 0.4.sp,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(7.dp),
+                    ) {
+                        if (flashState is FlashOperationState.Completed) {
+                            Icon(
+                                imageVector = KufusIcons.CheckCircle,
+                                contentDescription = null,
+                                tint = textColor.copy(alpha = 0.92f),
+                                modifier = Modifier.size(15.dp),
+                            )
+                        }
+                        Text(
+                            text = label,
+                            color = textColor,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.55.sp,
+                        )
+                    }
                 }
             }
         }

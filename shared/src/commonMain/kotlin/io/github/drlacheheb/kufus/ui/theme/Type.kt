@@ -34,7 +34,7 @@ val UiLabelReg =
 val MonoCode =
     TextStyle(
         fontFamily = FontFamily.Monospace,
-        fontSize = 13.sp,
+        fontSize = 13.5.sp,
         lineHeight = 20.sp,
         fontWeight = FontWeight.Normal,
     )
@@ -44,40 +44,40 @@ val MonoDetail =
         fontFamily = FontFamily.Monospace,
         fontSize = 12.sp,
         lineHeight = 16.sp,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
         letterSpacing = 0.02.sp,
     )
 
 val LabelXs =
     TextStyle(
         fontFamily = FontFamily.Default,
-        fontSize = 11.sp,
-        lineHeight = 14.sp,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = 0.05.sp,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.01.sp,
     )
 
 val LabelSm =
     TextStyle(
         fontFamily = FontFamily.Default,
-        fontSize = 12.sp,
-        lineHeight = 16.sp,
+        fontSize = 12.5.sp,
+        lineHeight = 17.sp,
         fontWeight = FontWeight.Medium,
     )
 
 val CaptionXs =
     TextStyle(
         fontFamily = FontFamily.Default,
-        fontSize = 11.sp,
-        lineHeight = 15.sp,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
         fontWeight = FontWeight.Normal,
     )
 
 val BodyCompact =
     TextStyle(
         fontFamily = FontFamily.Default,
-        fontSize = 13.sp,
-        lineHeight = 18.sp,
+        fontSize = 13.5.sp,
+        lineHeight = 19.sp,
         fontWeight = FontWeight.Normal,
     )
 

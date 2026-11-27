@@ -27,7 +27,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -72,7 +71,9 @@ internal val KufusFieldHeight = 36.dp
 internal val KufusControlGap = 8.dp
 internal val KufusSectionGap = 14.dp
 internal val KufusCheckboxIndent = 30.dp // 20.dp checkbox + 10.dp gap
-internal val KufusControlShape = RoundedCornerShape(4.dp)
+internal val KufusControlShape = RoundedCornerShape(2.dp)
+internal val KufusMenuShape = RoundedCornerShape(3.dp)
+internal val KufusDialogShape = RoundedCornerShape(4.dp)
 internal val LocalInlineDialogMode = compositionLocalOf { false }
 
 @Composable
@@ -84,16 +85,16 @@ internal fun KufusSectionHeading(
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
             text = title,
-            style = UiLabelBold.copy(fontSize = 14.sp, color = palette.onSurface),
+            style = UiLabelBold.copy(fontSize = 13.5.sp, letterSpacing = (-0.15).sp, color = palette.onSurface),
         )
         HorizontalDivider(
             modifier = Modifier.weight(1f),
             thickness = 1.dp,
-            color = palette.border,
+            color = palette.outlineVariant,
         )
     }
 }
@@ -129,7 +130,7 @@ internal fun KufusDropdownBox(
     val bgColor = if (enabled) palette.inputBackground else palette.surfaceContainerLow
     val borderColor =
         when {
-            !enabled -> palette.border.copy(alpha = 0.55f)
+            !enabled -> palette.outlineVariant
             expanded -> palette.primary
             isHovered -> palette.borderHover
             else -> palette.border
@@ -169,7 +170,7 @@ internal fun KufusDropdownBox(
                 Icon(
                     imageVector = KufusIcons.ArrowDropDown,
                     contentDescription = null,
-                    tint = if (enabled) palette.onSurfaceVariant else palette.outline,
+                    tint = if (enabled) palette.onSurfaceVariant else palette.outline.copy(alpha = 0.45f),
                     modifier = Modifier.size(18.dp),
                 )
             }
@@ -183,7 +184,7 @@ internal fun KufusDropdownBox(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { onExpandedChange(false) },
-            shape = KufusControlShape,
+            shape = KufusMenuShape,
             containerColor = menuColor,
             border = BorderStroke(1.dp, palette.border),
             modifier = menuWidthModifier,
@@ -201,8 +202,8 @@ internal fun KufusDropdownMenuItem(
     selected: Boolean = false,
 ) {
     val palette = KufusTheme.palette
-    val textColor = if (selected) palette.primary else palette.onSurface
-    val itemBg = if (selected) palette.primary.copy(alpha = 0.12f) else Color.Transparent
+    val textColor = if (selected) palette.accentText else palette.onSurface
+    val itemBg = if (selected) palette.onSurface.copy(alpha = 0.08f) else Color.Transparent
     DropdownMenuItem(
         text = {
             Text(
@@ -245,7 +246,7 @@ internal fun KufusCompactTextField(
     val bgColor = if (enabled) palette.inputBackground else palette.surfaceContainerLow
     val borderColor =
         when {
-            !enabled -> palette.border.copy(alpha = 0.55f)
+            !enabled -> palette.outlineVariant
             isFocused -> palette.primary
             isHovered -> palette.borderHover
             else -> palette.border
@@ -280,7 +281,7 @@ internal fun KufusCompactTextField(
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        style = MonoCode.copy(color = palette.onSurfaceVariant.copy(alpha = 0.45f)),
+                        style = MonoCode.copy(color = palette.outline),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -301,49 +302,62 @@ internal fun KufusActionButton(
     destructive: Boolean = false,
 ) {
     val palette = KufusTheme.palette
+    val letterSpacing = if (text == text.uppercase()) 0.45.sp else 0.sp
     if (emphasized && enabled) {
-        Button(
-            onClick = onClick,
-            enabled = true,
+        val interactionSource = remember { MutableInteractionSource() }
+        val isHovered by interactionSource.collectIsHoveredAsState()
+        val fillColor = if (isHovered) palette.primary.copy(alpha = 0.88f) else palette.primary
+        Surface(
             shape = KufusControlShape,
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = palette.primary,
-                    contentColor = palette.onPrimary,
-                ),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp),
-            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp),
+            color = fillColor,
             modifier =
                 modifier
                     .height(KufusFieldHeight)
-                    .pointerHoverIcon(PointerIcon.Hand),
+                    .hoverable(interactionSource = interactionSource)
+                    .pointerHoverIcon(PointerIcon.Hand)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = null,
+                        role = Role.Button,
+                        onClick = onClick,
+                    ),
         ) {
-            Text(
-                text = text,
-                style = UiLabelBold.copy(fontSize = 13.sp, color = palette.onPrimary),
-                maxLines = 1,
-            )
+            Box(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = text,
+                    style =
+                        UiLabelBold.copy(
+                            fontSize = 13.sp,
+                            letterSpacing = letterSpacing,
+                            color = palette.onPrimary,
+                        ),
+                    maxLines = 1,
+                )
+            }
         }
     } else {
         val interactionSource = remember { MutableInteractionSource() }
         val isHovered by interactionSource.collectIsHoveredAsState()
         val borderColor =
             when {
-                !enabled -> palette.border.copy(alpha = 0.55f)
-                destructive -> palette.error.copy(alpha = if (isHovered) 0.75f else 0.45f)
+                !enabled -> palette.outlineVariant
+                destructive -> palette.error.copy(alpha = if (isHovered) 0.85f else 0.55f)
                 isHovered -> palette.borderHover
                 else -> palette.border
             }
         val containerColor =
             when {
                 !enabled -> palette.surfaceContainerLow
-                destructive -> palette.errorContainer.copy(alpha = if (isHovered) 0.38f else 0.25f)
-                isHovered -> palette.surfaceContainer
-                else -> Color.Transparent
+                destructive -> palette.errorContainer.copy(alpha = if (isHovered) 0.45f else 0.25f)
+                isHovered -> palette.surfaceBright
+                else -> palette.surfaceContainer
             }
         val contentColor =
             when {
-                !enabled -> palette.outline.copy(alpha = 0.55f)
+                !enabled -> palette.outline
                 destructive -> palette.error
                 else -> palette.onSurface
             }
@@ -359,7 +373,7 @@ internal fun KufusActionButton(
                     containerColor = containerColor,
                     contentColor = contentColor,
                     disabledContainerColor = palette.surfaceContainerLow,
-                    disabledContentColor = palette.outline.copy(alpha = 0.55f),
+                    disabledContentColor = palette.outline,
                 ),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp),
             modifier =
@@ -369,7 +383,12 @@ internal fun KufusActionButton(
         ) {
             Text(
                 text = text,
-                style = UiLabelBold.copy(fontSize = 13.sp, color = contentColor),
+                style =
+                    UiLabelBold.copy(
+                        fontSize = 13.sp,
+                        letterSpacing = letterSpacing,
+                        color = contentColor,
+                    ),
                 maxLines = 1,
             )
         }
@@ -388,7 +407,7 @@ internal fun KufusSquareIconButton(
     val palette = KufusTheme.palette
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
-    val resolvedTint = tint ?: palette.onSurfaceVariant
+    val resolvedTint = tint ?: if (isHovered) palette.onSurface else palette.onSurfaceVariant
     val bgColor =
         when {
             !enabled -> palette.surfaceContainerLow
@@ -397,7 +416,7 @@ internal fun KufusSquareIconButton(
         }
     val borderColor =
         when {
-            !enabled -> palette.border.copy(alpha = 0.55f)
+            !enabled -> palette.outlineVariant
             isHovered -> palette.borderHover
             else -> palette.border
         }
@@ -418,7 +437,7 @@ internal fun KufusSquareIconButton(
                 Icon(
                     imageVector = icon,
                     contentDescription = contentDescription,
-                    tint = if (enabled) resolvedTint else palette.outline.copy(alpha = 0.45f),
+                    tint = if (enabled) resolvedTint else palette.outline.copy(alpha = 0.72f),
                     modifier = Modifier.size(18.dp),
                 )
             }
@@ -464,7 +483,7 @@ internal fun KufusCheckboxRow(
         )
         Text(
             text = label,
-            style = BodyCompact.copy(fontSize = 12.sp, color = if (enabled) palette.onSurface else palette.outline),
+            style = BodyCompact.copy(fontSize = 13.sp, color = if (enabled) palette.onSurface else palette.outline),
         )
     }
 }
@@ -534,11 +553,11 @@ internal fun KufusModalDialog(
 
     val dialogCard: @Composable () -> Unit = {
         Surface(
-            shape = KufusControlShape,
+            shape = KufusDialogShape,
             color = palette.background,
             contentColor = palette.onSurface,
             border = BorderStroke(1.dp, palette.border),
-            shadowElevation = 12.dp,
+            shadowElevation = 16.dp,
             modifier =
                 modifier
                     .fillMaxWidth()
@@ -548,7 +567,7 @@ internal fun KufusModalDialog(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(18.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 Row(
@@ -598,7 +617,7 @@ internal fun KufusModalDialog(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.60f))
+                    .background(Color.Black.copy(alpha = 0.72f))
                     .padding(horizontal = 24.dp, vertical = 20.dp),
             contentAlignment = Alignment.Center,
         ) {

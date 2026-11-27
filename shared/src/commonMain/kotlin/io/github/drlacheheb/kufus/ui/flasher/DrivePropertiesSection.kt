@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -139,7 +140,7 @@ internal fun RufusDrivePropertiesSection(
                         icon = KufusIcons.CheckCircle,
                         contentDescription = "Inspect image info",
                         enabled = uiState.inspectedImage != null,
-                        tint = palette.primary,
+                        tint = palette.secondary,
                         onClick = onShowImageInfo,
                     )
                 }
@@ -224,6 +225,7 @@ private fun InlineNoticeMessage(uiState: FlasherUiState) {
             style = CaptionXs.copy(color = if (messagePair.second) palette.error else palette.onSurfaceVariant),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 2.dp),
         )
     }
 }
