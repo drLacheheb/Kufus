@@ -128,13 +128,21 @@ tasks.withType<JavaExec>().configureEach {
     systemProperty("kufus.uefiNtfs.path", uefiNtfsAsset.asFile.absolutePath)
 }
 
-tasks.matching { it.name == "prepareAppResources" }.configureEach {
+tasks.matching { it.name == "prepareAppResources" || it.name == "prepareReleaseAppResources" }.configureEach {
     dependsOn(prepareWorkerAppResources)
 }
 
 compose.desktop {
     application {
         mainClass = "io.github.drlacheheb.kufus.MainKt"
+
+        buildTypes.release.proguard {
+            version.set("7.10.0")
+            isEnabled.set(true)
+            obfuscate.set(false)
+            optimize.set(true)
+            configurationFiles.from(project.file("proguard-rules.pro"))
+        }
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
@@ -288,7 +296,7 @@ afterEvaluate {
 }
 
 tasks.register<Exec>("packageInnoSetup") {
-    dependsOn(tasks.named("createDistributable"))
+    dependsOn(tasks.named("createReleaseDistributable"))
     group = "compose desktop"
     description = "Compiles Modern Dark Windows Setup Wizard using Inno Setup 6"
 

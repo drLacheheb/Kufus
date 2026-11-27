@@ -144,7 +144,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Package .deb, .rpm, and Distributable
-        run: ./gradlew :desktopApp:packageDeb :desktopApp:packageRpm :desktopApp:createDistributable -Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }} -Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }} --no-daemon
+        run: ./gradlew :desktopApp:packageReleaseDeb :desktopApp:packageReleaseRpm :desktopApp:createReleaseDistributable -Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }} -Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }} --no-daemon
 
       - name: Print jpackage Error Logs on Failure
         if: failure()
@@ -158,7 +158,7 @@ jobs:
           VER="${{ needs.prepare.outputs.release_version }}"
           mkdir -p release-artifacts AppDir/usr AppDir/usr/share/icons/hicolor/256x256/apps
 
-          cp -a desktopApp/build/compose/binaries/main/app/Kufus/. AppDir/usr/
+          cp -a desktopApp/build/compose/binaries/main-release/app/Kufus/. AppDir/usr/
           cp packaging/linux/kufus.png AppDir/kufus.png
           cp packaging/linux/kufus.png AppDir/usr/share/icons/hicolor/256x256/apps/kufus.png
 
@@ -206,13 +206,13 @@ jobs:
           chmod +x appimagetool
           ARCH=x86_64 ./appimagetool --appimage-extract-and-run AppDir "release-artifacts/Kufus-${VER}-linux-x86_64.AppImage"
 
-          DEB_FILE="$(find desktopApp/build/compose/binaries/main/deb -maxdepth 1 -type f -name '*.deb' | head -n1)"
-          RPM_FILE="$(find desktopApp/build/compose/binaries/main/rpm -maxdepth 1 -type f -name '*.rpm' | head -n1)"
+          DEB_FILE="$(find desktopApp/build/compose/binaries/main-release/deb -maxdepth 1 -type f -name '*.deb' | head -n1)"
+          RPM_FILE="$(find desktopApp/build/compose/binaries/main-release/rpm -maxdepth 1 -type f -name '*.rpm' | head -n1)"
           test -f "${DEB_FILE}"
           test -f "${RPM_FILE}"
           cp "${DEB_FILE}" "release-artifacts/Kufus-${VER}-linux-x86_64.deb"
           cp "${RPM_FILE}" "release-artifacts/Kufus-${VER}-linux-x86_64.rpm"
-          tar -czf "release-artifacts/Kufus-${VER}-linux-x86_64-portable.tar.gz" -C desktopApp/build/compose/binaries/main/app Kufus
+          tar -czf "release-artifacts/Kufus-${VER}-linux-x86_64-portable.tar.gz" -C desktopApp/build/compose/binaries/main-release/app Kufus
           ls -lh release-artifacts
 
       - name: Upload Linux Installers
@@ -263,7 +263,7 @@ jobs:
 
       - name: Package MSI and Inno Setup Windows Installer
         shell: pwsh
-        run: ./gradlew :desktopApp:packageMsi :desktopApp:packageInnoSetup "-Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }}" "-Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }}" --no-daemon
+        run: ./gradlew :desktopApp:packageReleaseMsi :desktopApp:packageInnoSetup "-Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }}" "-Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }}" --no-daemon
 
       - name: Print jpackage Error Logs on Failure
         if: failure()
@@ -278,14 +278,14 @@ jobs:
           $ver = "${{ needs.prepare.outputs.release_version }}"
           New-Item -ItemType Directory -Force -Path release-artifacts | Out-Null
 
-          $msi = Get-ChildItem -Path desktopApp\build\compose\binaries\main\msi -Filter *.msi | Select-Object -First 1
-          $exe = Get-ChildItem -Path desktopApp\build\compose\binaries\main\setup -Filter *.exe | Select-Object -First 1
-          if (-not $msi) { throw "No .msi installer found under desktopApp\build\compose\binaries\main\msi" }
-          if (-not $exe) { throw "No Inno Setup .exe found under desktopApp\build\compose\binaries\main\setup" }
+          $msi = Get-ChildItem -Path desktopApp\build\compose\binaries\main-release\msi -Filter *.msi | Select-Object -First 1
+          $exe = Get-ChildItem -Path desktopApp\build\compose\binaries\main-release\setup -Filter *.exe | Select-Object -First 1
+          if (-not $msi) { throw "No .msi installer found under desktopApp\build\compose\binaries\main-release\msi" }
+          if (-not $exe) { throw "No Inno Setup .exe found under desktopApp\build\compose\binaries\main-release\setup" }
 
           Copy-Item -Path $msi.FullName -Destination "release-artifacts\Kufus-$ver-windows-x64.msi"
           Copy-Item -Path $exe.FullName -Destination "release-artifacts\Kufus-$ver-windows-x64-setup.exe"
-          Compress-Archive -Path "desktopApp\build\compose\binaries\main\app\Kufus\*" -DestinationPath "release-artifacts\Kufus-$ver-windows-x64-portable.zip" -Force
+          Compress-Archive -Path "desktopApp\build\compose\binaries\main-release\app\Kufus\*" -DestinationPath "release-artifacts\Kufus-$ver-windows-x64-portable.zip" -Force
           Get-ChildItem release-artifacts
 
       - name: Upload Windows Installers
@@ -315,7 +315,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Package .dmg and Distributable
-        run: ./gradlew :desktopApp:packageDmg :desktopApp:createDistributable -Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }} -Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }} --no-daemon
+        run: ./gradlew :desktopApp:packageReleaseDmg :desktopApp:createReleaseDistributable -Pkufus.packageVersion=${{ needs.prepare.outputs.package_version }} -Pkufus.releaseVersion=${{ needs.prepare.outputs.release_version }} --no-daemon
 
       - name: Print jpackage Error Logs on Failure
         if: failure()
@@ -328,10 +328,10 @@ jobs:
           set -euo pipefail
           VER="${{ needs.prepare.outputs.release_version }}"
           mkdir -p release-artifacts
-          DMG_FILE="$(find desktopApp/build/compose/binaries/main/dmg -maxdepth 1 -type f -name '*.dmg' | head -n1)"
+          DMG_FILE="$(find desktopApp/build/compose/binaries/main-release/dmg -maxdepth 1 -type f -name '*.dmg' | head -n1)"
           test -f "${DMG_FILE}"
           cp "${DMG_FILE}" "release-artifacts/Kufus-${VER}-macos-arm64.dmg"
-          (cd desktopApp/build/compose/binaries/main/app && zip -qry "${GITHUB_WORKSPACE}/release-artifacts/Kufus-${VER}-macos-arm64-portable.zip" Kufus.app)
+          (cd desktopApp/build/compose/binaries/main-release/app && zip -qry "${GITHUB_WORKSPACE}/release-artifacts/Kufus-${VER}-macos-arm64-portable.zip" Kufus.app)
           ls -lh release-artifacts
 
       - name: Upload macOS Installers

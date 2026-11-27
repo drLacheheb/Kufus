@@ -42,7 +42,7 @@ RestartApplications=yes
 
 ; Output configuration
 OutputBaseFilename=Kufus-Setup-{#MyAppVersion}
-OutputDir=..\..\desktopApp\build\compose\binaries\main\setup
+OutputDir=..\..\desktopApp\build\compose\binaries\main-release\setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 SetupIconFile=kufus.ico
@@ -56,7 +56,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "startmenuicon"; Description: "Create a Start Menu shortcut"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
-Source: "..\..\desktopApp\build\compose\binaries\main\app\Kufus\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\desktopApp\build\compose\binaries\main-release\app\Kufus\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startmenuicon
