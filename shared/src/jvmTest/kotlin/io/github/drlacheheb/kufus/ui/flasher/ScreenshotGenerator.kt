@@ -84,13 +84,13 @@ private fun measurePreferredHeightDp(spec: ScreenshotSpec): Int {
     var preferredDp = FALLBACK_HEIGHT_DP
     val probeScene =
         ImageComposeScene(
-            width = WINDOW_WIDTH_DP,
-            height = 900,
-            density = Density(1f),
+            width = (WINDOW_WIDTH_DP * HIDPI_SCALE).toInt(),
+            height = (900 * HIDPI_SCALE).toInt(),
+            density = Density(HIDPI_SCALE),
         ) {
             RenderShowcaseWindow(
                 spec = spec,
-                onMeasuredHeight = { heightDp -> preferredDp = ceil(heightDp).toInt() },
+                onMeasuredHeight = { heightDp -> preferredDp = ceil(heightDp).toInt() + 2 },
             )
         }
     try {
