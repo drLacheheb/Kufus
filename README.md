@@ -18,6 +18,33 @@
 
 **Kufus** (*Kotlin USB Formatting Utility Suite*) brings a fast, Rufus-inspired desktop utility to **Linux**, **Windows**, and **macOS**. Its desktop UI runs unprivileged on the JVM, while a native Kotlin/Native worker handles raw block I/O, partition tables, pure-Kotlin filesystem formatting, on-the-fly decompression, and Windows installation media preparation.
 
+## Screenshots
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/kufus-windows-iso-dark.png" alt="Kufus Dark Mode — Windows 11 ISO ready" width="380" /><br />
+      <sub><b>Dark Mode</b> — Windows 11 ISO ready (NTFS + UEFI:NTFS)</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/kufus-flashing-light.png" alt="Kufus Light Mode — Active ISO flashing" width="380" /><br />
+      <sub><b>Light Mode</b> — Active ISO flashing with live speed &amp; ETA</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/kufus-windows-experience.png" alt="Kufus Windows User Experience customization dialog" width="380" /><br />
+      <sub><b>Windows User Experience</b> — Automated <code>autounattend.xml</code> options</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/kufus-format-mode.png" alt="Kufus Drive Formatter" width="380" /><br />
+      <sub><b>Drive Formatter</b> — Pure-Kotlin GPT/MBR &amp; FAT32/exFAT/NTFS/ext4</sub>
+    </td>
+  </tr>
+</table>
+</div>
+
 ## Features
 
 - **Bootable Image Flashing**
@@ -41,9 +68,9 @@
 
 | Platform | Native Target | Elevation Mechanism | Packaging Format |
 | :--- | :--- | :--- | :--- |
-| **Linux** (`x86_64`) | `linuxX64` | `pkexec` + Polkit policy | `.deb`, `.rpm` |
-| **Windows** (`x86_64`) | `mingwX64` | Win32 UAC (`ShellExecuteExW` via `kufus-worker --elevate`) | `.msi` |
-| **macOS** (`arm64`) | `macosArm64` | `osascript` administrator prompt | `.dmg` |
+| **Linux** (`x86_64`) | `linuxX64` | `pkexec` + Polkit policy | `.deb`, `.rpm`, `.AppImage`, portable `.tar.gz` |
+| **Windows 10 / 11** (`x86_64`) | `mingwX64` | Win32 UAC (`ShellExecuteExW` via `kufus-worker --elevate`) | `.msi`, Setup `.exe`, portable `.zip` |
+| **macOS** (`arm64`) | `macosArm64` | `osascript` administrator prompt | `.dmg`, portable `.zip` |
 
 ## Architecture
 
@@ -97,6 +124,9 @@ The `:desktopApp:run` task automatically compiles the host's debug `kufus-worker
 
 # Run with Compose Hot Reload
 ./gradlew :desktopApp:hotRun --auto
+
+# Regenerate 3x HiDPI showcase screenshots into docs/screenshots/
+./gradlew :shared:generateScreenshots
 ```
 
 ### Linux Polkit Policy (Development)
