@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
-import io.github.drlacheheb.kufus.AppBuildConfig
 import io.github.drlacheheb.kufus.disk.model.FilesystemType
 import io.github.drlacheheb.kufus.disk.model.ImageFormat
 import io.github.drlacheheb.kufus.disk.model.ImageInfo
@@ -164,7 +163,6 @@ fun FlasherContent(
         Column(modifier = Modifier.fillMaxSize()) {
             KufusTopBar(
                 title = "Kufus",
-                subtitle = "v${AppBuildConfig.VERSION}",
                 modifier = Modifier.onSizeChanged { topBarHeightPx = it.height },
             )
 
@@ -180,7 +178,7 @@ fun FlasherContent(
                         Modifier
                             .fillMaxWidth()
                             .onSizeChanged { formContentHeightPx = it.height }
-                            .padding(start = 16.dp, top = 12.dp, end = 16.dp, bottom = 10.dp),
+                            .padding(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 10.dp),
                     verticalArrangement = Arrangement.spacedBy(KufusSectionGap),
                 ) {
                     RufusDrivePropertiesSection(
@@ -215,15 +213,15 @@ fun FlasherContent(
                         .fillMaxWidth()
                         .onSizeChanged { footerHeightPx = it.height }
                         .drawBehind {
-                            if (formScrollState.canScrollForward) {
+                            if (formScrollState.maxValue > 2 && formScrollState.canScrollForward) {
                                 drawLine(
-                                    color = palette.border,
+                                    color = palette.outlineVariant,
                                     start = Offset.Zero,
                                     end = Offset(size.width, 0f),
                                     strokeWidth = 1.dp.toPx(),
                                 )
                             }
-                        }.padding(start = 16.dp, top = 4.dp, end = 16.dp, bottom = 12.dp),
+                        }.padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 14.dp),
             )
         }
     }

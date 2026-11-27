@@ -127,7 +127,7 @@ object KufusIcons {
     }
 
     val Minimize: ImageVector by lazy {
-        vectorIcon(name = "Minimize", paths = listOf("M6,19h12v2H6Z"))
+        vectorIcon(name = "Minimize", paths = listOf("M6,11h12v2H6Z"))
     }
 
     val ArrowDropDown: ImageVector by lazy {

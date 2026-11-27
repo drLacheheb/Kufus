@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,7 +50,6 @@ val LocalWindowActions = compositionLocalOf { WindowActions() }
 @Composable
 fun KufusTopBar(
     title: String,
-    subtitle: String,
     modifier: Modifier = Modifier,
 ) {
     val palette = KufusTheme.palette
@@ -62,7 +60,7 @@ fun KufusTopBar(
             modifier
                 .fillMaxWidth()
                 .height(TOP_BAR_HEIGHT_DP.dp)
-                .background(palette.surfaceContainer),
+                .background(palette.background),
     ) {
         windowActions.draggableArea(Modifier.fillMaxSize()) {
             Row(
@@ -70,30 +68,16 @@ fun KufusTopBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
+                Box(
                     modifier =
                         Modifier
                             .fillMaxHeight()
                             .padding(start = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentAlignment = Alignment.CenterStart,
                 ) {
                     Text(
                         text = title,
-                        style = UiLabelBold.copy(fontSize = 13.sp, color = palette.onSurface),
-                    )
-
-                    Text(
-                        text = "|",
-                        fontSize = 13.sp,
-                        color = palette.outlineVariant,
-                    )
-
-                    Text(
-                        text = subtitle,
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily.Monospace,
-                        color = palette.onSurfaceVariant,
+                        style = UiLabelBold.copy(fontSize = 13.5.sp, letterSpacing = (-0.2).sp, color = palette.onSurface),
                     )
                 }
 
@@ -107,7 +91,7 @@ fun KufusTopBar(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(palette.border),
+                    .background(palette.outlineVariant),
         )
     }
 }
