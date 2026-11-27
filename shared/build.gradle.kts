@@ -2,6 +2,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -99,10 +100,29 @@ kotlin {
             implementation(libs.turbine)
             implementation(libs.kotest.assertions)
         }
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
     }
 }
 
 compose.resources {
     publicResClass = true
     packageOfResClass = "io.github.drlacheheb.kufus.resources"
+}
+
+val jvmTestCompilation = kotlin.jvm().compilations.getByName("test")
+
+tasks.register<JavaExec>("generateScreenshots") {
+    group = "documentation"
+    description = "Renders high-DPI headless Compose screenshots into docs/screenshots/"
+    dependsOn(jvmTestCompilation.compileTaskProvider)
+    classpath = jvmTestCompilation.output.allOutputs + jvmTestCompilation.runtimeDependencyFiles
+    mainClass.set("io.github.drlacheheb.kufus.ui.flasher.ScreenshotGeneratorKt")
+    args(
+        rootProject.layout.projectDirectory
+            .dir("docs/screenshots")
+            .asFile
+            .absolutePath,
+    )
 }

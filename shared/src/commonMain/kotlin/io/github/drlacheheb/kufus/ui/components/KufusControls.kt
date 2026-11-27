@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -39,6 +40,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +73,7 @@ internal val KufusControlGap = 8.dp
 internal val KufusSectionGap = 14.dp
 internal val KufusCheckboxIndent = 30.dp // 20.dp checkbox + 10.dp gap
 internal val KufusControlShape = RoundedCornerShape(4.dp)
+internal val LocalInlineDialogMode = compositionLocalOf { false }
 
 @Composable
 internal fun KufusSectionHeading(
@@ -527,8 +530,9 @@ internal fun KufusModalDialog(
 ) {
     val palette = KufusTheme.palette
     val resolvedIconTint = iconTint ?: palette.primary
+    val inlineDialogMode = LocalInlineDialogMode.current
 
-    Dialog(onDismissRequest = onDismiss) {
+    val dialogCard: @Composable () -> Unit = {
         Surface(
             shape = KufusControlShape,
             color = palette.background,
@@ -586,6 +590,23 @@ internal fun KufusModalDialog(
                     footer()
                 }
             }
+        }
+    }
+
+    if (inlineDialogMode) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.60f))
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            dialogCard()
+        }
+    } else {
+        Dialog(onDismissRequest = onDismiss) {
+            dialogCard()
         }
     }
 }
