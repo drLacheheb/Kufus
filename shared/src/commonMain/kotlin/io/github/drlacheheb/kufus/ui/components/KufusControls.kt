@@ -26,10 +26,6 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowDropDown
-import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -168,7 +164,7 @@ internal fun KufusDropdownBox(
                     modifier = Modifier.weight(1f),
                 )
                 Icon(
-                    imageVector = Icons.Outlined.ArrowDropDown,
+                    imageVector = KufusIcons.ArrowDropDown,
                     contentDescription = null,
                     tint = if (enabled) palette.onSurfaceVariant else palette.outline,
                     modifier = Modifier.size(18.dp),
@@ -495,7 +491,7 @@ internal fun KufusCollapsibleRow(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(
-            imageVector = if (expanded) Icons.Outlined.KeyboardArrowUp else Icons.Outlined.KeyboardArrowDown,
+            imageVector = if (expanded) KufusIcons.KeyboardArrowUp else KufusIcons.KeyboardArrowDown,
             contentDescription = null,
             tint = if (isHovered) palette.onSurface else palette.outline,
             modifier = Modifier.size(16.dp),

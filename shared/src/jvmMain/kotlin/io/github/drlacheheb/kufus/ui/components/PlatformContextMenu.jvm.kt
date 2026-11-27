@@ -18,12 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.ContentCut
-import androidx.compose.material.icons.filled.ContentPaste
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -133,11 +127,11 @@ private class CursorPopupPositionProvider(
 
 private fun resolveMenuIconAndShortcut(label: String): Pair<ImageVector, String?> =
     when (label.lowercase().trim()) {
-        "cut" -> Icons.Default.ContentCut to "Ctrl+X"
-        "copy" -> Icons.Default.ContentCopy to "Ctrl+C"
-        "paste" -> Icons.Default.ContentPaste to "Ctrl+V"
-        "select all" -> Icons.Default.SelectAll to "Ctrl+A"
-        else -> Icons.Default.Edit to null
+        "cut" -> KufusIcons.ContentCut to "Ctrl+X"
+        "copy" -> KufusIcons.ContentCopy to "Ctrl+C"
+        "paste" -> KufusIcons.ContentPaste to "Ctrl+V"
+        "select all" -> KufusIcons.SelectAll to "Ctrl+A"
+        else -> KufusIcons.Edit to null
     }
 
 @Composable

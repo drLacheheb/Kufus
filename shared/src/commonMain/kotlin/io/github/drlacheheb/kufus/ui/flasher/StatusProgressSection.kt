@@ -12,11 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Article
-import androidx.compose.material.icons.outlined.DarkMode
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +36,7 @@ import io.github.drlacheheb.kufus.disk.model.formatByteSize
 import io.github.drlacheheb.kufus.ui.components.KufusActionButton
 import io.github.drlacheheb.kufus.ui.components.KufusControlGap
 import io.github.drlacheheb.kufus.ui.components.KufusControlShape
+import io.github.drlacheheb.kufus.ui.components.KufusIcons
 import io.github.drlacheheb.kufus.ui.components.KufusSectionHeading
 import io.github.drlacheheb.kufus.ui.components.KufusSquareIconButton
 import io.github.drlacheheb.kufus.ui.theme.KufusTheme
@@ -104,21 +100,21 @@ internal fun RufusStatusSection(
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(KufusControlGap)) {
                 KufusSquareIconButton(
-                    icon = Icons.Outlined.Info,
+                    icon = KufusIcons.Info,
                     contentDescription = "About Kufus",
                     enabled = true,
                     tint = palette.primary,
                     onClick = onShowAbout,
                 )
                 KufusSquareIconButton(
-                    icon = if (isDarkTheme) Icons.Outlined.LightMode else Icons.Outlined.DarkMode,
+                    icon = if (isDarkTheme) KufusIcons.LightMode else KufusIcons.DarkMode,
                     contentDescription = if (isDarkTheme) "Switch to light mode" else "Switch to dark mode",
                     enabled = true,
                     tint = palette.primary,
                     onClick = actions.onToggleTheme,
                 )
                 KufusSquareIconButton(
-                    icon = Icons.AutoMirrored.Outlined.Article,
+                    icon = KufusIcons.Article,
                     contentDescription = "Show operation log",
                     enabled = true,
                     tint = palette.primary,

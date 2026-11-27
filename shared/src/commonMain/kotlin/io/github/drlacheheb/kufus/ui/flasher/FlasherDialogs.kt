@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -41,6 +39,7 @@ import io.github.drlacheheb.kufus.ui.components.KufusActionButton
 import io.github.drlacheheb.kufus.ui.components.KufusCheckboxRow
 import io.github.drlacheheb.kufus.ui.components.KufusControlShape
 import io.github.drlacheheb.kufus.ui.components.KufusFieldHeight
+import io.github.drlacheheb.kufus.ui.components.KufusIcons
 import io.github.drlacheheb.kufus.ui.components.KufusModalDialog
 import io.github.drlacheheb.kufus.ui.theme.KufusTheme
 import io.github.drlacheheb.kufus.ui.theme.LabelSm
@@ -67,7 +66,7 @@ internal fun KufusDestructiveDriveDialog(
     val palette = KufusTheme.palette
     KufusModalDialog(
         title = title,
-        icon = Icons.Outlined.Warning,
+        icon = KufusIcons.Warning,
         iconTint = palette.destructiveAccent,
         onDismiss = onDismiss,
         modifier = modifier,

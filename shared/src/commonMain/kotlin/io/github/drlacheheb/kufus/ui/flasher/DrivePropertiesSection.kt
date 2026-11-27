@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +31,7 @@ import io.github.drlacheheb.kufus.ui.components.KufusDropdownBox
 import io.github.drlacheheb.kufus.ui.components.KufusDropdownMenuItem
 import io.github.drlacheheb.kufus.ui.components.KufusFieldHeight
 import io.github.drlacheheb.kufus.ui.components.KufusFieldLabel
+import io.github.drlacheheb.kufus.ui.components.KufusIcons
 import io.github.drlacheheb.kufus.ui.components.KufusSectionHeading
 import io.github.drlacheheb.kufus.ui.components.KufusSquareIconButton
 import io.github.drlacheheb.kufus.ui.theme.CaptionXs
@@ -85,7 +82,7 @@ internal fun RufusDrivePropertiesSection(
                     }
                 }
                 KufusSquareIconButton(
-                    icon = Icons.Outlined.Refresh,
+                    icon = KufusIcons.Refresh,
                     contentDescription = "Refresh USB drives",
                     enabled = interactive && !uiState.isScanning,
                     onClick = actions.onRefreshDrives,
@@ -139,7 +136,7 @@ internal fun RufusDrivePropertiesSection(
                     }
                 } else {
                     KufusSquareIconButton(
-                        icon = Icons.Outlined.CheckCircle,
+                        icon = KufusIcons.CheckCircle,
                         contentDescription = "Inspect image info",
                         enabled = uiState.inspectedImage != null,
                         tint = palette.primary,
@@ -149,7 +146,7 @@ internal fun RufusDrivePropertiesSection(
 
                 if (uiState.selectedImagePath != null) {
                     KufusSquareIconButton(
-                        icon = Icons.Outlined.Close,
+                        icon = KufusIcons.Close,
                         contentDescription = "Clear selected image",
                         enabled = interactive,
                         onClick = actions.onClearImage,

@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Minimize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -132,7 +129,7 @@ fun WindowControls(
             hoverBackground = palette.windowControlHover,
         ) { isHovered ->
             Icon(
-                imageVector = Icons.Default.Minimize,
+                imageVector = KufusIcons.Minimize,
                 contentDescription = "Minimize",
                 tint = if (isHovered) palette.onSurface else palette.onSurfaceVariant,
                 modifier = Modifier.size(14.dp),
@@ -144,7 +141,7 @@ fun WindowControls(
             hoverBackground = CloseHoverColor,
         ) { isHovered ->
             Icon(
-                imageVector = Icons.Default.Close,
+                imageVector = KufusIcons.Close,
                 contentDescription = "Close",
                 tint = if (isHovered) Color.White else palette.onSurfaceVariant,
                 modifier = Modifier.size(14.dp),
